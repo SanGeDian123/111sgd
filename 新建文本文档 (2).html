@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phigros交流频道 - 第二届课题模式大赛</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #FF8E8E;
+            --accent-color: #FFD3D3;
+            --text-color: #2D3436;
+            --light-text: #636E72;
+            --bg-color: #FFF5F5;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --phigros-pink: #FF9EB7;
+            --phigros-lightpink: #FFC0CB;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFC0CB 100%);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* 鼠标轨迹效果 - 背景 */
+        .mouse-trail-bg {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: overlay;
+            z-index: -1;
+            filter: blur(5px);
+        }
+        
+        /* 鼠标轨迹效果 - 主板块 */
+        .mouse-trail-card {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 158, 183, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9;
+            filter: blur(3px);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 650px;
+            padding: 2rem;
+            margin: 2rem auto;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--phigros-pink), var(--phigros-lightpink));
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            transform-origin: center;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .card-header h1 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 2rem;
+            line-height: 1.4;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .card-header p {
+            margin: 1rem 0 0;
+            opacity: 0.9;
+            font-weight: 300;
+            font-size: 1.2rem;
+            position: relative;
+        }
+        
+        .card-body {
+            padding: 3rem;
+            min-height: 300px;
+        }
+        
+        .form-group {
+            margin-bottom: 2.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+        
+        .input-field {
+            position: relative;
+        }
+        
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 18px 25px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            font-size: 1.2rem;
+            background-color: rgba(248, 249, 250, 0.9);
+            font-family: 'Noto Sans SC', sans-serif;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+            border-color: var(--phigros-pink);
+            outline: none;
+            background-color: white;
+            box-shadow: 0 0 0 5px rgba(255, 158, 183, 0.2), 0 10px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            background-size: 1.5em;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--phigros-pink), var(--phigros-lightpink));
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+            box-shadow: 0 10px 30px rgba(255, 158, 183, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 158, 183, 0.6);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 1rem;
+            margin-top: 0.8rem;
+            display: none;
+        }
+        
+        /* 确认页面样式 */
+        .confirmation-page {
+            display: none;
+            text-align: center;
+        }
+        
+        .confirmation-icon {
+            font-size: 6rem;
+            color: var(--phigros-pink);
+            margin-bottom: 2.5rem;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: bounce 1.2s ease infinite alternate, pulse 2s ease infinite;
+        }
+        
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        
+        .confirmation-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--phigros-pink);
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .confirmation-subtitle {
+            color: var(--light-text);
+            margin-bottom: 3rem;
+            font-size: 1.3rem;
+        }
+        
+        .verification-code-container {
+            position: relative;
+            margin: 3rem 0;
+        }
+        
+        .verification-code {
+            background: linear-gradient(135deg, #FFF5F5, #FFE0E0);
+            border-radius: 15px;
+            padding: 2rem;
+            font-family: 'Courier New', monospace;
+            font-size: 2rem;
+            letter-spacing: 4px;
+            color: var(--phigros-pink);
+            font-weight: bold;
+            border: 3px dashed var(--phigros-lightpink);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .verification-code::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.5) 50%, transparent 60%);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            20% { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .copy-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+        
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+        
+        .user-info {
+            text-align: left;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-top: 3rem;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+        
+        .info-item {
+            margin-bottom: 1.5rem;
+            display: flex;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            min-width: 120px;
+            color: var(--light-text);
+            font-size: 1.2rem;
+        }
+        
+        .info-value {
+            font-weight: 500;
+            flex: 1;
+            font-size: 1.2rem;
+        }
+        
+        .message-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid var(--phigros-lightpink);
+            margin-top: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .screenshot-hint {
+            font-size: 1.1rem;
+            color: var(--light-text);
+            margin-top: 3rem;
+            font-style: italic;
+        }
+        
+        /* Tips区域 */
+        .tips-container {
+            width: 100%;
+            max-width: 650px;
+            margin: 0 auto 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tips-content {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            opacity: 0;
+            position: absolute;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translateY(20px);
+        }
+        
+        .tips-content.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 页脚信息 */
+        .footer-info {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--light-text);
+            margin-bottom: 1rem;
+            padding: 0 1rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                max-width: 95%;
+            }
+            
+            .card-header {
+                padding: 2rem;
+            }
+            
+            .card-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card-body {
+                padding: 2rem;
+                min-height: auto;
+            }
+            
+            .verification-code {
+                font-size: 1.6rem;
+                padding: 1.5rem;
+            }
+            
+            .info-label, .info-value {
+                font-size: 1.1rem;
+            }
+            
+            .submit-btn {
+                padding: 16px;
+                font-size: 1.1rem;
+            }
+            
+            .tips-container {
+                max-width: 95%;
+                min-height: 50px;
+            }
+            
+            .tips-content {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 鼠标轨迹元素将通过JavaScript动态添加 -->
+    
+    <div class="container" id="mainContainer">
+        <div class="card">
+            <div class="card-header">
+                <h1>Phigros交流频道<br>第二届课题模式大赛</h1>
+                <p>这是一个文本输入框</p>
+            </div>
+            
+            <div class="card-body">
+                <form id="registrationForm">
+                    <div class="form-group">
+                        <label for="region">选择赛区</label>
+                        <div class="input-field">
+                            <select id="region" name="region" required>
+                                <option value="">-- 请选择您的赛区 --</option>
+                                <option value="一赛区">一赛区 (RKS范围待定)</option>
+                                <option value="二赛区">二赛区 (RKS范围待定)</option>
+                                <option value="三赛区">三赛区 (RKS范围待定)</option>
+                                <option value="四赛区">四赛区 (RKS范围待定)</option>
+                            </select>
+                        </div>
+                        <div id="regionError" class="error">请选择赛区</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nickname">游戏昵称</label>
+                        <div class="input-field">
+                            <input type="text" id="nickname" name="nickname" placeholder="请输入您的Phigros游戏昵称" required>
+                        </div>
+                        <div id="nicknameError" class="error">请输入有效的昵称</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="rks">当前RKS</label>
+                        <div class="input-field">
+                            <input type="number" id="rks" name="rks" placeholder="请输入您的RKS (14.75-16.80)" min="14.75" max="16.80" step="0.01" required>
+                        </div>
+                        <div id="rksError" class="error">请输入有效的RKS (14.75-16.80)</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">留言/备注</label>
+                        <div class="input-field">
+                            <textarea id="message" name="message" placeholder="可以填写您的参赛宣言、想挑战的曲目或其他备注信息"></textarea>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">立即报名</button>
+                </form>
+                
+                <div id="confirmationPage" class="confirmation-page">
+                    <div class="confirmation-icon">✓</div>
+                    <h2 class="confirmation-title">报名成功！</h2>
+                    <p class="confirmation-subtitle">请保存您的报名凭证</p>
+                    
+                    <div class="verification-code-container">
+                        <div class="verification-code" id="verificationCode"></div>
+                        <button class="copy-btn" id="copyBtn">复制</button>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="info-item">
+                            <span class="info-label">赛区：</span>
+                            <span class="info-value" id="confirmRegion"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">昵称：</span>
+                            <span class="info-value" id="confirmNickname"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">RKS：</span>
+                            <span class="info-value" id="confirmRks"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">报名时间：</span>
+                            <span class="info-value" id="confirmTime"></span>
+                        </div>
+                        <div class="info-item" id="messageContainer" style="display: none;">
+                            <span class="info-label">留言：</span>
+                            <div class="info-value">
+                                <div class="message-content" id="confirmMessage"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="screenshot-hint">请截图保存此页面作为报名凭证，并加入比赛QQ群：770707485</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tips-container" id="tipsContainer">
+        <!-- Tips内容将通过JavaScript动态添加 -->
+    </div>
+    
+    <div class="footer-info">
+        这是一个由三个点制作的测试网站
+    </div>
+
+    <script>
+        // 生成随机验证码（15位字母和数字）
+        function generateVerificationCode(length = 15) {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result.match(/.{1,5}/g).join('-'); // 每5位用-分隔
+        }
+
+        // 创建鼠标轨迹效果
+        function setupMouseTrail() {
+            const trailCount = 10;
+            const bgTrails = [];
+            const cardTrails = [];
+            let mouseX = 0;
+            let mouseY = 0;
+            
+            // 创建背景轨迹元素
+            for (let i = 0; i < trailCount; i++) {
+                const trail = document.createElement('div');
+                trail.className = 'mouse-trail-bg';
+                trail.style.width = `${20 - i}px`;
+                trail.style.height = `${20 - i}px`;
+                trail.style.opacity = `${1 - i * 0.08}`;
+                document.body.appendChild(trail);
+                bgTrails.push({
+                    element: trail,
+                    x: mouseX,
+                    y: mouseY
+                });
+            }
+            
+            // 创建卡片轨迹元素
+            for (let i = 0; i < trailCount/2; i++) {
+                const trail = document.createElement('div');
+                trail.className = 'mouse-trail-card';
+                trail.style.width = `${15 - i}px`;
+                trail.style.height = `${15 - i}px`;
+                trail.style.opacity = `${1 - i * 0.15}`;
+                document.body.appendChild(trail);
+                cardTrails.push({
+                    element: trail,
+                    x: mouseX,
+                    y: mouseY
+                });
+            }
+            
+            // 鼠标移动事件
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+            
+            // 动画循环
+            function animate() {
+                // 更新背景轨迹元素的位置
+                bgTrails.forEach((trail, index) => {
+                    const prevPos = {x: trail.x, y: trail.y};
+                    trail.x = mouseX + (prevPos.x - mouseX) * 0.3;
+                    trail.y = mouseY + (prevPos.y - mouseY) * 0.3;
+                    
+                    trail.element.style.left = `${trail.x}px`;
+                    trail.element.style.top = `${trail.y}px`;
+                });
+                
+                // 更新卡片轨迹元素的位置
+                const card = document.querySelector('.card');
+                const cardRect = card.getBoundingClientRect();
+                
+                cardTrails.forEach((trail, index) => {
+                    const prevPos = {x: trail.x, y: trail.y};
+                    trail.x = mouseX + (prevPos.x - mouseX) * 0.4;
+                    trail.y = mouseY + (prevPos.y - mouseY) * 0.4;
+                    
+                    // 检查是否在卡片区域内
+                    const isInsideCard = trail.x >= cardRect.left && 
+                                        trail.x <= cardRect.right && 
+                                        trail.y >= cardRect.top && 
+                                        trail.y <= cardRect.bottom;
+                    
+                    trail.element.style.display = isInsideCard ? 'block' : 'none';
+                    trail.element.style.left = `${trail.x}px`;
+                    trail.element.style.top = `${trail.y}px`;
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        // Tips功能
+        function setupTips() {
+            const tips = [
+                '!!',
+                '(Not) Sound Only',
+                '这里是三个点~',
+                '(•▴• )咕咕～',
+                '"72788433374733678633778263464"',
+                ':( :手法.exe未响应，如果继续推进会导致推分失败。是否继续？ 【休息一下/强行推进】',
+                '[此条Tip已被隐藏]',
+                'AT的意思并不是Anti-Thumb（',
+                'Compute It With Some...什么来着?',
+                'CONDITIO SINE QUA NON',
+                'E! S! M! Power!',
+                '建议明天我设不出来贫道主直接女装 —— 一只独特的瓜。',
+                '纳入四个点tip。',
+                '我是一只独特的瓜。',
+                '我不是一只独特的瓜。',
+                'EZ是摁着而非Easy，HD是高清而非Hard，IN是里面而非Insane，AT是位于而非Another，等会我是不是说反了？',
+                'Full Combo就是打中所有note咕！',
+                'Hit me with the HARDCORE!!!',
+                'INTeRneT ENERGY -Overdose-',
+                'Let\'s! Get! Higher!!!',
+                'NO ONE YES PIGEONS',
+                'One! Two! Three! Fire!!!',
+                'phigrOS正在加载中...',
+                'print("Hello tips3.0");',
+                'Redemption.',
+                'rks是RankingScore，不是热开水！（认真脸）',
+                'Saturn新闻频道：插播一条紧急播报，请不要看向晚上的天空或月亮。',
+                'See You Next Time',
+                'sudo 板子自己打歌',
+                'Tell Me Your Secret',
+                'This is the story for one character of misery',
+                '"Tip: Tip: Tip: Tip: Tip: Tip: Tip: Tip: Tip:"',
+                'top10我最喜欢的鸽子——top1：鸠！',
+                'WHAT DO YOU KNOW WHAT DO YOU PLAY WHAT DO YOU REMEMBER WHAT DO YOU LOVE',
+                'WOW 虫眼！',
+                'Yooooooooooooooooooo',
+                '按键大小不舒服？在设置中可以调整大小！',
+                '阿鸠你又在反复看Tips了哦',
+                '啊！PhigrOS又崩溃了......',
+                '啊！要给你看什么Tip好呢...(翻',
+                '啊～啊～啊咦↑啊咦↑啊→啊↑啊↓啊～啊～',
+                '别慌！这只是个鸽子陷阱而已啦~',
+                '不是，鸽们',
+                '不要的显卡统统可以拿到Pigeon Animation Team换不锈钢脸盆',
+                '这是一个彩蛋tip。让我想想...你用的是四个点罢。',
+                '不要喝奇怪的品红色药水！',
+                '不要烤翅……',
+                '你知道吗？其实我也不知道。',
+                '不要在意他人对你说什么，你独一无二，你是你自己的光',
+                '不知道如何解锁一些特定歌曲？可以从收集品当中寻找一下线索哦！',
+                '彩~虹~课~题~模~式~',
+                '黑~白~课~题~模~式~',
+                '没有草饲三个点我不查。',
+                '大红星人民，打扫我的厕所。',
+                '第55行，第3列。',
+                '三个点想月抛吗。',
+                '猜猜看你要重新加载多少次才能再看到这条tip ￣︶￣',
+                '尝试获得更高的acc比获得更高的分数更能够提升自己的水平。',
+                '长时间打歌有引发腱鞘炎的风险哦，注意休息。',
+                '戴上有线耳机以获取最佳体验',
+                '当你在看这行字的时候 我就知道 你肯定在看这行字',
+                '当你在三次觉得诸事不顺的时候，看看现在的打歌成绩，比起刚入坑的时候，是不是提高了很多？现在也是哦，你一直都在成长',
+                '打击头部不会使更新速度加快',
+                '噔噔噔 噔噔 噔噔 噔噔噔噔噔噔',
+                '等一下！请检查设备周围是否有水杯，要是被碰倒的话……嘶——',
+                '本节目由一只独特的瓜冠名播出。',
+                '对不起，您所拨打的电话号码是空号-Sorry, the number you dialed does not exist',
+                '多多游玩Phigros有助于放松手指以及锻炼大脑协调能力哦！',
+                '本节目由牢坠冠名播出。',
+                '诶……防脱洗发水用完了……',
+                '饿啊！咕咕咕咕',
+                '扉格晚五点，周五准时更新！',
+                '分数我所欲也，acc亦我所欲也，若二者不可得兼，多练也。',
+                '本节目由一百一十四个点冠名播出。',
+                '附近 5 米内，有一只鸽子，正在靠近......',
+                '感谢各位小鸽子们陪伴我们走过了五个年头',
+                '高三党，现在，立刻，去给我学习！！！',
+                '本节目由RainCloud 9冠名播出。',
+                '给多押note镀层金，我就是这个谱面里最靓的仔',
+                '歌曲可以用标题、难度、分数的分类顺序或逆序排序咕！',
+                '鸽游的烧烤摊包含了驴肉、欧芹、油条、完全熟不透的牛角等等，唯独就是没有烤翅……',
+                '本节目由超级底力苦手冠名播出。',
+                '本节目由三个点冠名播出。',
+                '歌终有一收，而有些需要一点小小的帮助（指旋转设备',
+                '咕咕咕~如果你正开心，希望Phigros能让你笑颜常开哦！',
+                '咕咕咕~如果你正糟心，希望Phigros能带你扬眉吐气哦！',
+                '咕咕咕！请不要在任何无关场合提及Phigros哦！谢谢配合！咕咕咕！',
+                '欢迎回到Phigros！',
+                '欢迎在B站@Phigros官方 关注我们！',
+                '致敬传奇拼好谱。',
+                '活用垂直判定可以打出很多炫酷的手法！',
+                '干什么！小心禁言。',
+                '何意味。',
+                '这坨史你们怎么打到S的。',
+                '建议月报明天发不出来直接女装。',
+                '出来了。',
+                '你在用/phitips指令对吧~！',
+                'It\'s been a long way...',
+                '补药再麦若了。',
+                '请证明：1+1=114514。'
+            ];
+            
+            const tipsContainer = document.getElementById('tipsContainer');
+            
+            // 随机排序Tips
+            tips.sort(() => Math.random() - 0.5);
+            
+            // 创建Tips元素
+            tips.forEach((tip, index) => {
+                const tipElement = document.createElement('div');
+                tipElement.className = 'tips-content';
+                tipElement.textContent = tip;
+                tipsContainer.appendChild(tipElement);
+            });
+            
+            const tipElements = document.querySelectorAll('.tips-content');
+            let currentTip = 0;
+            
+            // 显示第一个Tip
+            tipElements[0].classList.add('active');
+            
+            // 设置定时器切换Tips
+            setInterval(() => {
+                // 隐藏当前Tip
+                tipElements[currentTip].classList.remove('active');
+                
+                // 移动到下一个Tip
+                currentTip = (currentTip + 1) % tipElements.length;
+                
+                // 显示下一个Tip
+                tipElements[currentTip].classList.add('active');
+            }, 5000);
+        }
+
+        // 复制验证码功能
+        function setupCopyButton() {
+            const copyBtn = document.getElementById('copyBtn');
+            copyBtn.addEventListener('click', () => {
+                const verificationCode = document.getElementById('verificationCode').textContent;
+                const region = document.getElementById('confirmRegion').textContent;
+                const nickname = document.getElementById('confirmNickname').textContent;
+                const rks = document.getElementById('confirmRks').textContent;
+                const time = document.getElementById('confirmTime').textContent;
+                const messageContainer = document.getElementById('messageContainer');
+                let message = '';
+                
+                if (messageContainer.style.display !== 'none') {
+                    message = `\n留言：${document.getElementById('confirmMessage').textContent}`;
+                }
+                
+                const textToCopy = `Phigros课题模式大赛报名凭证\n\n验证码：${verificationCode}\n赛区：${region}\n昵称：${nickname}\nRKS：${rks}\n报名时间：${time}${message}\n\n请保存此信息作为报名凭证`;
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = '已复制！';
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    alert('复制失败，请手动复制验证码');
+                });
+            });
+        }
+
+        // 表单提交处理
+        function setupFormSubmission() {
+            document.getElementById('registrationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 清除之前的错误信息
+                document.getElementById('regionError').style.display = 'none';
+                document.getElementById('nicknameError').style.display = 'none';
+                document.getElementById('rksError').style.display = 'none';
+                
+                // 获取表单值
+                const region = document.getElementById('region').value;
+                const nickname = document.getElementById('nickname').value.trim();
+                const rks = parseFloat(document.getElementById('rks').value);
+                const message = document.getElementById('message').value.trim();
+                
+                let isValid = true;
+                
+                // 验证赛区
+                if (!region) {
+                    document.getElementById('regionError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // 验证昵称
+                if (!nickname) {
+                    document.getElementById('nicknameError').textContent = '请输入昵称';
+                    document.getElementById('nicknameError').style.display = 'block';
+                    isValid = false;
+                } else if (nickname.length > 20) {
+                    document.getElementById('nicknameError').textContent = '昵称不能超过20个字符';
+                    document.getElementById('nicknameError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // 验证RKS
+                if (isNaN(rks)) {
+                    document.getElementById('rksError').textContent = '请输入有效的RKS';
+                    document.getElementById('rksError').style.display = 'block';
+                    isValid = false;
+                } else if (rks < 14.75 || rks > 16.80) {
+                    document.getElementById('rksError').textContent = 'RKS必须在14.75到16.80之间';
+                    document.getElementById('rksError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (isValid) {
+                    // 生成验证码
+                    const verificationCode = generateVerificationCode();
+                    
+                    // 获取当前时间
+                    const now = new Date();
+                    const formattedTime = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                    
+                    // 显示确认页面
+                    document.getElementById('registrationForm').style.display = 'none';
+                    document.getElementById('confirmationPage').style.display = 'block';
+                    
+                    // 填充信息
+                    document.getElementById('verificationCode').textContent = verificationCode;
+                    document.getElementById('confirmRegion').textContent = region;
+                    document.getElementById('confirmNickname').textContent = nickname;
+                    document.getElementById('confirmRks').textContent = rks.toFixed(2);
+                    document.getElementById('confirmTime').textContent = formattedTime;
+                    
+                    // 如果有留言则显示
+                    if (message) {
+                        document.getElementById('messageContainer').style.display = 'flex';
+                        document.getElementById('confirmMessage').textContent = message;
+                    }
+                    
+                    // 在实际应用中，这里可以添加数据提交逻辑
+                    console.log('报名信息:', {
+                        region: region,
+                        nickname: nickname,
+                        rks: rks,
+                        message: message,
+                        verificationCode: verificationCode,
+                        timestamp: formattedTime
+                    });
+                }
+            });
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            setupMouseTrail();
+            setupFormSubmission();
+            setupCopyButton();
+            setupTips();
+            
+            // 确保页面可以滚动到顶部
+            window.scrollTo(0, 0);
+        });
+    </script>
+</body>
+</html>
